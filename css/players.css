@@ -1,0 +1,16 @@
+.mp3player figure {
+    height: 250px;
+    width: 200px;
+    background-color: black;
+    color: white;
+}
+
+.mp3player figure .trackname,
+.mp3player figure .trackimage {
+    text-align: center;
+}
+
+.mp3player figure figcaption .time,
+.mp3player figure .controls {
+    padding-left: 15px;
+}
