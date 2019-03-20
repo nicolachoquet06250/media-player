@@ -1,5 +1,5 @@
 .mp3player figure {
-    height: 250px;
+    /*height: 250px;*/
     width: 200px;
     background-color: black;
     color: white;
@@ -13,4 +13,30 @@
 .mp3player figure figcaption .time,
 .mp3player figure .controls {
     padding-left: 15px;
+}
+
+.mp3player .progress {
+    height: 20px;
+    width: 90%;
+    margin-left: 5%;
+    background-color: white;
+}
+
+.mp3player .progress .loading {
+    background-color: orange;
+    height: 100%;
+}
+
+.playbacktime {
+    color: black;
+    text-align: right;
+    position: absolute;
+    margin-left: 8%;
+    margin-top: -20px;
+    cursor: default;
+}
+
+.volume_control input[type="range"] {
+    writing-mode: bt-lr; /* IE */
+    -webkit-appearance: slider-vertical;
 }
