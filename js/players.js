@@ -178,13 +178,180 @@ window.addEventListener('load', () => {
             mute_unmute: mute_unmute,
             stop_player: stop_player
         });
-
         init_audio(audio, {
             volumizer: volumizer,
             finish: finish,
             updatePlayhead: updatePlayhead
         });
-
         init_volume(volume_control, audio, volumizer);
+    });
+
+    document.querySelectorAll('mp4Player').forEach((player, i) => {
+        let track = player.getAttribute('src');
+        let preload_attr = player.getAttribute('preload');
+        let track_name = player.getAttribute('video-name');
+        let track_image = player.getAttribute('video-image');
+        let progressbar_size = player.getAttribute('narrow-progressbar');
+        let width = parseInt(player.getAttribute('width'));
+        let height = parseInt(player.getAttribute('height'));
+        progressbar_size = !progressbar_size ? 20 : (progressbar_size === 'true' ? 5 : 20);
+
+        let progressbar_color = player.getAttribute('progressbar-color');
+        if(!progressbar_color) {
+            progressbar_color = 'orange';
+        }
+        let time_text_color = 'black';
+        let border = '';
+        if(progressbar_color === 'black' || progressbar_color === '#000000' || progressbar_color === 'rgb(\'0, 0, 0\')') {
+            time_text_color = 'gray';
+            border = 'border: 1px solid white;';
+        }
+
+        let init_video = (video, callbacks) => {
+            video.addEventListener('volumechange', callbacks.volumizer);
+            video.addEventListener('ended', callbacks.finish);
+            video.addEventListener('timeupdate', callbacks.updatePlayhead);
+        };
+        let init_control_buttons = (play, mute, stop, video, callbacks) => {
+            stop.style.display = 'none';
+            setText(
+                mute,
+                (video.volume > 0 ? buttons_values_alternatives.mute.unmute : buttons_values_alternatives.mute.mute)
+            );
+            play.addEventListener('click', callbacks.play_pause);
+            mute.addEventListener('click', callbacks.mute_unmute);
+            stop.addEventListener('click', callbacks.stop_player);
+        };
+        let init_volume = (volume, video, volumizer) => {
+            volume.addEventListener('change', volumizer);
+            volume.value = video.volume;
+        };
+
+        console.log(track, track_name, preload_attr);
+
+        let mute_unmute = () => {
+            let video = document.querySelector(`#mp3player${i} .videotrack`);
+            let mute_button = document.querySelectorAll(`#mp3player${i} .controls button`)[1];
+            if(video.volume === 0) {
+                setText(mute_button, buttons_values_alternatives.mute.unmute);
+                video.volume = 1;
+            }
+            else {
+                setText(mute_button, buttons_values_alternatives.mute.mute);
+                video.volume = 0;
+            }
+        };
+        let play_pause = () => {
+            let video = document.querySelector(`#mp3player${i} .videotrack`);
+            let play_button = document.querySelectorAll(`#mp3player${i} .controls button`)[0];
+            let stop_button = document.querySelectorAll(`#mp3player${i} .controls button`)[2];
+            if(stop_button.style.display === 'none') {
+                stop_button.style.display = buttons_values_alternatives.stop.play;
+            }
+            if(video.paused) {
+                setText(play_button, buttons_values_alternatives.play.play);
+                video.play();
+            }
+            else {
+                setText(play_button, buttons_values_alternatives.play.pause);
+                video.pause();
+            }
+        };
+        let volumizer = element => {
+            let video = document.querySelector(`#mp3player${i} .videotrack`);
+            let mute_button = document.querySelectorAll(`#mp3player${i} .controls button`)[1];
+            if(element.target.nodeName === 'INPUT' && element.target.getAttribute('type') === 'range') {
+                video.volume = element.target.value;
+            }
+            setText(
+                mute_button,
+                (video.volume === 0 ? buttons_values_alternatives.mute.mute : buttons_values_alternatives.mute.unmute)
+            );
+        };
+        let finish = track => {
+            if(!track) {
+                track = document.querySelector(`#mp3player${i} .audiotrack`);
+            }
+            let play_button = document.querySelectorAll(`#mp3player${i} .controls button`)[0];
+
+            track.currentTime = 0;
+            setText(play_button, buttons_values_alternatives.play.pause);
+        };
+        let updatePlayhead = () => {
+            let video = document.querySelector(`#mp3player${i} .videotrack`);
+            let play_head = document.querySelector(`#mp3player${i} .progress`);
+            let playback_time = document.querySelector(`#mp3player${i} .playbacktime`);
+            let loading = document.querySelector(`#mp3player${i} .progress .loading`);
+            play_head.value = video.currentTime;
+            let s = parseInt(video.currentTime % 60);
+            let m = parseInt((video.currentTime / 60) % 60);
+            s = (s >= 10) ? s : "0" + s;
+            m = (m >= 10) ? m : "0" + m;
+            playback_time.innerHTML = m + ':' + s ;
+            loading.style.width = `${play_head.value * 100 / video.duration}%`;
+        };
+        let stop_player = () => {
+            let video = document.querySelector(`#mp3player${i} .videotrack`);
+            let stop_button = document.querySelectorAll(`#mp3player${i} .controls button`)[2];
+            finish(video);
+            video.pause();
+            stop_button.style.display = buttons_values_alternatives.stop.stop;
+        };
+
+        setText(player, `<div class="mp4player" 
+    id="mp4player${i}" style="width: ${width}px; height: ${height}px;">
+    <figure itemprop="track"
+            itemscope
+            itemtype="https://schema.org/VideoRecording" 
+            style="width: ${width + 50}px;">
+        <div class="videoimage">
+            <img src="${track_image}" 
+                 alt="${track_name}" 
+                 width="${width}" height="${height}" />
+                 <button class="play" type="button" 
+                         style="position: absolute; margin-left: -${width - 170}px; margin-top: ${height - 110}px;">Play</button>
+        </div>
+        <div class="videoname">
+            <b>${track_name}</b>
+        </div>
+        <div id="fader"></div>
+        <div id="playback"></div>
+        <video class="videotrack" itemprop="video" preload="${preload_attr}" controls style="display: none;">
+            <source src='${track}' type='video/mp4'>
+            <source src='${track.replace('.mp4', '.webm')}' type='video/webm'>
+        </video>
+        <div class="volume_control">
+            <input type="range" min="0" max="1" step="any" />
+        </div>
+        <div class="progress" style="height: ${progressbar_size}px; ${border}">
+            <div class="loading" style="background-color: ${progressbar_color}; width: 0;"></div>
+            <span class="playbacktime" style="color: ${time_text_color};">00:00</span>
+        </div>
+        <div class="controls" style="display: none;">
+            <button class="play" type="button">${buttons_values_alternatives.play.pause}</button>
+            <button class="mute" type="button"></button>
+            <button class="stop" type="button">${buttons_values_alternatives.stop.value}</button>
+        </div>
+    </figure>
+</div>`);
+
+        let controls_buttons = document.querySelectorAll(`#mp4player${i} .controls button`);
+        let video = document.querySelector(`#mp4player${i} .videotrack`);
+        let volume_control = document.querySelector(`#mp4player${i} .volume_control input`);
+        let play_button = controls_buttons[0];
+        let mute_button = controls_buttons[1];
+        let stop_button = controls_buttons[2];
+        init_control_buttons(play_button, mute_button, stop_button, video, {
+            play_pause: play_pause,
+            mute_unmute: mute_unmute,
+            stop_player: stop_player
+        });
+        init_video(video, {
+            volumizer: volumizer,
+            finish: finish,
+            updatePlayhead: updatePlayhead
+        });
+        init_volume(volume_control, video, volumizer);
+
     });
 });
