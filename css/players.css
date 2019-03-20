@@ -1,5 +1,4 @@
 .mp3player figure {
-    /*height: 250px;*/
     width: 200px;
     background-color: black;
     color: white;
@@ -16,19 +15,16 @@
 }
 
 .mp3player .progress {
-    height: 20px;
     width: 90%;
     margin-left: 5%;
     background-color: white;
 }
 
 .mp3player .progress .loading {
-    background-color: orange;
     height: 100%;
 }
 
 .playbacktime {
-    color: black;
     text-align: right;
     position: absolute;
     margin-left: 8%;
