@@ -19,7 +19,7 @@
 .mp3player figure .trackname,
 .mp3player figure .trackimage,
 .mp4player figure .videoname,
-.mp4player figure .videoimage{
+.mp4player figure .videoimage {
     text-align: center;
 }
 
@@ -31,19 +31,19 @@
 .mp3player figure figcaption .time,
 .mp3player figure .controls,
 .mp4player figure figcaption .time,
-.mp4player figure .controls{
+.mp4player figure .controls {
     padding-left: 15px;
 }
 
 .mp3player .progress,
-.mp4player .progress{
+.mp4player .progress {
     width: 90%;
     margin-left: 5%;
     background-color: white;
 }
 
 .mp3player .progress .loading,
-.mp4player .progress .loading{
+.mp4player .progress .loading {
     height: 100%;
 }
 
@@ -57,7 +57,7 @@
 }
 
 .mp4player .playbacktime {
-    margin-left: 21.5%;
+    margin-left: 9%;
 }
 
 .mp3player .volume_control input[type="range"] {

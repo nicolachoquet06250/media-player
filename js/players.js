@@ -17,6 +17,10 @@ window.addEventListener('load', () => {
             stop: 'none',
             play: 'inline-block',
             value: 'Stop'
+        },
+        fullscreen: {
+            fullscreen: 'Not fullscreen',
+            not_fullscreen: 'Fullscreen'
         }
     };
 
@@ -63,10 +67,11 @@ window.addEventListener('load', () => {
 
         let mute_unmute = () => {
             let audio = document.querySelector(`#mp3player${i} .audiotrack`);
+            let volume = document.querySelector(`#mp3player${i} .volume_control input[type="range"]`);
             let mute_button = document.querySelectorAll(`#mp3player${i} .controls button`)[1];
             if(audio.volume === 0) {
                 setText(mute_button, buttons_values_alternatives.mute.unmute);
-                audio.volume = 1;
+                audio.volume = volume.value;
             }
             else {
                 setText(mute_button, buttons_values_alternatives.mute.mute);
@@ -155,7 +160,7 @@ window.addEventListener('load', () => {
         <div class="volume_control">
             <input type="range" min="0" max="1" step="any" />
         </div>
-        <div class="progress" style="height: ${progressbar_size}px; ${border}">
+        <div class="progress" style="height: ${progressbar_size + 'px'}; ${border}">
             <div class="loading" style="background-color: ${progressbar_color}; width: 0;"></div>
             <span class="playbacktime" style="color: ${time_text_color};">00:00</span>
         </div>
@@ -212,7 +217,7 @@ window.addEventListener('load', () => {
             video.addEventListener('ended', callbacks.finish);
             video.addEventListener('timeupdate', callbacks.updatePlayhead);
         };
-        let init_control_buttons = (play, mute, stop, video, callbacks) => {
+        let init_control_buttons = (play, mute, stop, fs, video, callbacks) => {
             stop.style.display = 'none';
             setText(
                 mute,
@@ -221,6 +226,7 @@ window.addEventListener('load', () => {
             play.addEventListener('click', callbacks.play_pause);
             mute.addEventListener('click', callbacks.mute_unmute);
             stop.addEventListener('click', callbacks.stop_player);
+            fs.addEventListener('click', callbacks.fullscreen);
         };
         let init_volume = (volume, video, volumizer) => {
             volume.addEventListener('change', volumizer);
@@ -230,8 +236,8 @@ window.addEventListener('load', () => {
         console.log(track, track_name, preload_attr);
 
         let mute_unmute = () => {
-            let video = document.querySelector(`#mp3player${i} .videotrack`);
-            let mute_button = document.querySelectorAll(`#mp3player${i} .controls button`)[1];
+            let video = document.querySelector(`#mp4player${i} .videotrack`);
+            let mute_button = document.querySelectorAll(`#mp4player${i} .controls button`)[1];
             if(video.volume === 0) {
                 setText(mute_button, buttons_values_alternatives.mute.unmute);
                 video.volume = 1;
@@ -242,9 +248,13 @@ window.addEventListener('load', () => {
             }
         };
         let play_pause = () => {
-            let video = document.querySelector(`#mp3player${i} .videotrack`);
-            let play_button = document.querySelectorAll(`#mp3player${i} .controls button`)[0];
-            let stop_button = document.querySelectorAll(`#mp3player${i} .controls button`)[2];
+            let video = document.querySelector(`#mp4player${i} .videotrack`);
+            let play_button = document.querySelectorAll(`#mp4player${i} .controls button`)[0];
+            let stop_button = document.querySelectorAll(`#mp4player${i} .controls button`)[2];
+            if(video.style.display === 'none') {
+                video.style.display = 'block';
+                document.querySelector(`#mp4player${i} .videoimage`).style.display = 'none';
+            }
             if(stop_button.style.display === 'none') {
                 stop_button.style.display = buttons_values_alternatives.stop.play;
             }
@@ -258,8 +268,8 @@ window.addEventListener('load', () => {
             }
         };
         let volumizer = element => {
-            let video = document.querySelector(`#mp3player${i} .videotrack`);
-            let mute_button = document.querySelectorAll(`#mp3player${i} .controls button`)[1];
+            let video = document.querySelector(`#mp4player${i} .videotrack`);
+            let mute_button = document.querySelectorAll(`#mp4player${i} .controls button`)[1];
             if(element.target.nodeName === 'INPUT' && element.target.getAttribute('type') === 'range') {
                 video.volume = element.target.value;
             }
@@ -270,18 +280,18 @@ window.addEventListener('load', () => {
         };
         let finish = track => {
             if(!track) {
-                track = document.querySelector(`#mp3player${i} .audiotrack`);
+                track = document.querySelector(`#mp4player${i} .audiotrack`);
             }
-            let play_button = document.querySelectorAll(`#mp3player${i} .controls button`)[0];
+            let play_button = document.querySelectorAll(`#mp4player${i} .controls button`)[0];
 
             track.currentTime = 0;
             setText(play_button, buttons_values_alternatives.play.pause);
         };
         let updatePlayhead = () => {
-            let video = document.querySelector(`#mp3player${i} .videotrack`);
-            let play_head = document.querySelector(`#mp3player${i} .progress`);
-            let playback_time = document.querySelector(`#mp3player${i} .playbacktime`);
-            let loading = document.querySelector(`#mp3player${i} .progress .loading`);
+            let video = document.querySelector(`#mp4player${i} .videotrack`);
+            let play_head = document.querySelector(`#mp4player${i} .progress`);
+            let playback_time = document.querySelector(`#mp4player${i} .playbacktime`);
+            let loading = document.querySelector(`#mp4player${i} .progress .loading`);
             play_head.value = video.currentTime;
             let s = parseInt(video.currentTime % 60);
             let m = parseInt((video.currentTime / 60) % 60);
@@ -291,46 +301,52 @@ window.addEventListener('load', () => {
             loading.style.width = `${play_head.value * 100 / video.duration}%`;
         };
         let stop_player = () => {
-            let video = document.querySelector(`#mp3player${i} .videotrack`);
-            let stop_button = document.querySelectorAll(`#mp3player${i} .controls button`)[2];
+            let video = document.querySelector(`#mp4player${i} .videotrack`);
+            let stop_button = document.querySelectorAll(`#mp4player${i} .controls button`)[2];
+            video.style.display = 'none';
+            document.querySelector(`#mp4player${i} .videoimage`).style.display = 'block';
             finish(video);
             video.pause();
             stop_button.style.display = buttons_values_alternatives.stop.stop;
         };
+        let fullscreen = () => {
+            let video = document.querySelector(`#mp4player${i} .videotrack`);
+            (video.requestFullscreen ? video.requestFullscreen() : video.mozRequestFullScreen());
+        };
 
         setText(player, `<div class="mp4player" 
-    id="mp4player${i}" style="width: ${width}px; height: ${height}px;">
+    id="mp4player${i}" style="text-align: center; width: ${width + 'px'}; height: ${height + 'px'};">
     <figure itemprop="track"
             itemscope
             itemtype="https://schema.org/VideoRecording" 
-            style="width: ${width + 50}px;">
-        <div class="videoimage">
-            <img src="${track_image}" 
-                 alt="${track_name}" 
-                 width="${width}" height="${height}" />
-                 <button class="play" type="button" 
-                         style="position: absolute; margin-left: -${width - 170}px; margin-top: ${height - 110}px;">Play</button>
-        </div>
+            style="width: ${(width + 50) + 'px'};">
         <div class="videoname">
             <b>${track_name}</b>
         </div>
+        <div class="videoimage">
+            <img src="${track_image}" 
+                 alt="${track_name}" 
+                 style="width: ${width + 'px'}; height: ${height + 'px'};"
+                 width="${width}" height="${height}" />
+        </div>
         <div id="fader"></div>
         <div id="playback"></div>
-        <video class="videotrack" itemprop="video" preload="${preload_attr}" controls style="display: none;">
+        <video class="videotrack" style="margin-left: 1%; display: none;" itemprop="video" preload="${preload_attr}" width="${width }" height="${height}">
             <source src='${track}' type='video/mp4'>
             <source src='${track.replace('.mp4', '.webm')}' type='video/webm'>
         </video>
         <div class="volume_control">
             <input type="range" min="0" max="1" step="any" />
         </div>
-        <div class="progress" style="height: ${progressbar_size}px; ${border}">
+        <div class="progress" style="height: ${progressbar_size + 'px'}; ${border}">
             <div class="loading" style="background-color: ${progressbar_color}; width: 0;"></div>
             <span class="playbacktime" style="color: ${time_text_color};">00:00</span>
         </div>
-        <div class="controls" style="display: none;">
+        <div class="controls">
             <button class="play" type="button">${buttons_values_alternatives.play.pause}</button>
             <button class="mute" type="button"></button>
             <button class="stop" type="button">${buttons_values_alternatives.stop.value}</button>
+            <button class="fullscreen" type="button">${buttons_values_alternatives.fullscreen.not_fullscreen}</button>
         </div>
     </figure>
 </div>`);
@@ -341,10 +357,12 @@ window.addEventListener('load', () => {
         let play_button = controls_buttons[0];
         let mute_button = controls_buttons[1];
         let stop_button = controls_buttons[2];
-        init_control_buttons(play_button, mute_button, stop_button, video, {
+        let fs_button = controls_buttons[3];
+        init_control_buttons(play_button, mute_button, stop_button, fs_button, video, {
             play_pause: play_pause,
             mute_unmute: mute_unmute,
-            stop_player: stop_player
+            stop_player: stop_player,
+            fullscreen: fullscreen
         });
         init_video(video, {
             volumizer: volumizer,
