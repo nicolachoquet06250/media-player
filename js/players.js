@@ -207,7 +207,7 @@ window.addEventListener('load', () => {
         }
         let time_text_color = 'black';
         let border = '';
-        if(progressbar_color === 'black' || progressbar_color === '#000000' || progressbar_color === 'rgb(\'0, 0, 0\')') {
+        if(progressbar_color === 'black' || progressbar_color === '#000000' || progressbar_color === 'rgb(\'0, 0, 0\')' || progressbar_color.indexOf('dark') === 0) {
             time_text_color = 'gray';
             border = 'border: 1px solid white;';
         }
@@ -284,6 +284,7 @@ window.addEventListener('load', () => {
             }
             let play_button = document.querySelectorAll(`#mp4player${i} .controls button`)[0];
 
+            stop_player();
             track.currentTime = 0;
             setText(play_button, buttons_values_alternatives.play.pause);
         };
@@ -293,12 +294,25 @@ window.addEventListener('load', () => {
             let playback_time = document.querySelector(`#mp4player${i} .playbacktime`);
             let loading = document.querySelector(`#mp4player${i} .progress .loading`);
             play_head.value = video.currentTime;
-            let s = parseInt(video.currentTime % 60);
-            let m = parseInt((video.currentTime / 60) % 60);
+            let s = video.currentTime % 60;
+            let m = (video.currentTime / 60) % 60;
             s = (s >= 10) ? s : "0" + s;
             m = (m >= 10) ? m : "0" + m;
             playback_time.innerHTML = m + ':' + s ;
             loading.style.width = `${play_head.value * 100 / video.duration}%`;
+        };
+        let updatePlayheadWidthPercentage = percentage => {
+            let video = document.querySelector(`#mp4player${i} .videotrack`);
+            let play_head = document.querySelector(`#mp4player${i} .progress`);
+            let playback_time = document.querySelector(`#mp4player${i} .playbacktime`);
+            let loading = document.querySelector(`#mp4player${i} .progress .loading`);
+            play_head.value = video.currentTime;
+            let s = ((video.duration * 60 * 60) * (percentage / 100)) % 60;
+            let m = (((video.duration * 60 * 60) * (percentage / 100)) / 60) % 60;
+            s = (s >= 10) ? s : "0" + s;
+            m = (m >= 10) ? m : "0" + m;
+            playback_time.innerHTML = m + ':' + s ;
+            loading.style.width = `${percentage}%`;
         };
         let stop_player = () => {
             let video = document.querySelector(`#mp4player${i} .videotrack`);
@@ -312,6 +326,14 @@ window.addEventListener('load', () => {
         let fullscreen = () => {
             let video = document.querySelector(`#mp4player${i} .videotrack`);
             (video.requestFullscreen ? video.requestFullscreen() : video.mozRequestFullScreen());
+        };
+        let progressbar_click = progressbar => {
+            let x = progressbar.clientX;
+            let width = progressbar.target.offsetWidth;
+            let position = x - width;
+            let percentage = ( 100 * position ) / width;
+            updatePlayheadWidthPercentage(percentage);
+            console.log(x, width, position, percentage);
         };
 
         setText(player, `<div class="mp4player" 
@@ -333,7 +355,7 @@ window.addEventListener('load', () => {
         <div id="playback"></div>
         <video class="videotrack" style="margin-left: 1%; display: none;" itemprop="video" preload="${preload_attr}" width="${width }" height="${height}">
             <source src='${track}' type='video/mp4'>
-            <source src='${track.replace('.mp4', '.webm')}' type='video/webm'>
+            <source src='${track.replace('.mp4', '.webm').replace('/mp4', '/webm')}' type='video/webm'>
         </video>
         <div class="volume_control">
             <input type="range" min="0" max="1" step="any" />
@@ -370,6 +392,7 @@ window.addEventListener('load', () => {
             updatePlayhead: updatePlayhead
         });
         init_volume(volume_control, video, volumizer);
+        document.querySelector(`#mp4player${i} .progress`).addEventListener('click', progressbar_click)
 
     });
 });
