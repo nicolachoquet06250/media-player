@@ -17,7 +17,7 @@
 </head>
 <body>
 <h1>Sample Media Player using HTML5's Media API</h1>
-<div id='media-player'>
+<div id='media-player-video'>
     <video id='media-video' controls preload="auto">
         <source src='medias/videos/mp4/parrots.mp4' type='video/mp4'>
         <source src='medias/videos/webm/parrots.webm' type='video/webm'>
@@ -94,5 +94,83 @@
         </ul>
     </div>
 </div>
+
+<!--<div id='media-player-audio'>
+    <video id='media-audio' controls preload="auto">
+        <source src='medias/videos/mp4/parrots.mp4' type='video/mp4'>
+        <source src='medias/videos/webm/parrots.webm' type='video/webm'>
+    </video>
+    <div id='media-controls-audio'>
+        <progress id='progress-bar-audio' min='0' max='100' value='0'>0% played</progress>
+        <button id='replay-button-audio' class='replay' title='replay' onclick='replayMedia();'>Replay</button>
+        <button id='play-pause-button-audio' class='play' title='play' onclick='togglePlayPause();'>Play</button>
+        <button id='stop-button-audio' class='stop' title='stop' onclick='stopPlayer();'>Stop</button>
+        <button id='volume-inc-button-audio' class='volume-plus' title='increase volume' onclick='changeVolume("+");'>Increase volume</button>
+        <button id='volume-dec-button-audio' class='volume-minus' title='decrease volume' onclick='changeVolume("-");'>Decrease volume</button>
+        <button id='mute-button-audio' class='mute' title='mute' onclick='toggleMute("true");'>Mute</button>
+    </div>
+    <div id='media-play-list-audio'>
+        <h2>Play list</h2>
+        <ul id='play-list-audio'>
+            &lt;!&ndash; playlist de videos &ndash;&gt;
+            <li>
+                <span class='play-item'
+                      data-type="video"
+                      data-video="parrots"
+                      data-formats='["webm", "mp4"]'
+                      data-name="Parrots"></span>
+            </li>
+            <li>
+                <span class='play-item'
+                      data-type="video"
+                      data-video="paddle-wheel"
+                      data-formats='["webm", "mp4"]'
+                      data-name="Paddle Steamer Wheel"></span>
+            </li>
+            <li>
+                <span class='play-item'
+                      data-type="video"
+                      data-video="grass"
+                      data-formats='["webm", "mp4"]'
+                      data-name="Grass"></span>
+            </li>
+
+            &lt;!&ndash; Ancres de temps et de videos &ndash;&gt;
+
+            <li>
+                <span class='play-item'
+                      data-type="time"
+                      data-video="parrots"
+                      data-time="00:00:05"
+                      data-formats='["webm", "mp4"]'
+                      data-name="Les bases P1"></span>
+            </li>
+            <li>
+                <span class='play-item'
+                      data-type="time"
+                      data-video="parrots"
+                      data-time="00:00:13"
+                      data-formats='["webm", "mp4"]'
+                      data-name="Les bases P2"></span>
+            </li>
+            <li>
+                <span class='play-item'
+                      data-type="time"
+                      data-video="paddle-wheel"
+                      data-time="00:00:05"
+                      data-formats='["webm", "mp4"]'
+                      data-name="Les bases 2"></span>
+            </li>
+            <li>
+                <span class='play-item'
+                      data-type="time"
+                      data-video="grass"
+                      data-time="00:00:05"
+                      data-formats='["webm", "mp4"]'
+                      data-name="Un temps"></span>
+            </li>
+        </ul>
+    </div>
+</div>-->
 </body>
 </html>
