@@ -1,0 +1,74 @@
+.mp3player, .mp4player {
+    display: inline-block;
+}
+
+.mp3player figure,
+.mp4player figure {
+    background-color: black;
+    color: white;
+}
+
+.mp3player figure {
+    width: 200px;
+}
+
+.mp4player figure {
+    padding-bottom: 10px;
+}
+
+.mp3player figure .trackname,
+.mp3player figure .trackimage,
+.mp4player figure .videoname,
+.mp4player figure .videoimage {
+    text-align: center;
+}
+
+.mp4player .videoname,
+.mp4player .videoimage {
+    padding: 5px;
+}
+
+.mp3player figure figcaption .time,
+.mp3player figure .controls,
+.mp4player figure figcaption .time,
+.mp4player figure .controls {
+    padding-left: 15px;
+}
+
+.mp3player .progress,
+.mp4player .progress {
+    width: 90%;
+    margin-left: 5%;
+    background-color: white;
+}
+
+.mp3player .progress .loading,
+.mp4player .progress .loading {
+    height: 100%;
+}
+
+.mp3player .playbacktime,
+.mp4player .playbacktime {
+    text-align: right;
+    position: absolute;
+    margin-left: 8%;
+    margin-top: -20px;
+    cursor: default;
+}
+
+.mp4player .playbacktime {
+    margin-left: 9%;
+}
+
+.mp3player .volume_control input[type="range"] {
+    writing-mode: bt-lr; /* IE */
+    -webkit-appearance: slider-vertical;
+}
+
+.mp4player .volume_control {
+    text-align: center;
+}
+
+.mp4player .volume_control input[type="range"] {
+    width: 50%;
+}
